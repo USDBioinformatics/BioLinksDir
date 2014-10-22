@@ -22,12 +22,20 @@ public class BioLinksDir {
     
     public static void main(String[] args) throws IOException {
         BioLinksDir instance = new BioLinksDir();
-        String inputFile = "C:\\Users\\Xinghua\\Desktop\\dna.json";
-        String outputFolderDir = "C:\\Users\\Xinghua\\Desktop\\dna\\";
-        if (args.length != 2) {
-            System.out.println("two parameters are required!");
+//        String inputFile = "C:\\Users\\Xinghua\\Desktop\\dna.json";
+//        String outputFolderDir = "C:\\Users\\Xinghua\\Desktop\\dna";
+//        instance.SplitJsonFile(inputFile, outputFolderDir);
+        if ((args.length == 1)&&(args[0].equals("-help"))) {
+            System.out.println("help information: \n  suppose you have an input json file: C:\\Work\\myfile.json \n"
+                    + "the output folder is: C:\\myfolder \n"
+                    + "so, you can type:  -o C:\\Work\\myfile.json C:\\myfolder");
+        }else if((args.length == 3)&&(args[0].equals("-o"))){
+            instance.SplitJsonFile(args[1],args[2]);
+        }else {
+            System.out.println("wrong paramenter number, type -help");
         }
-        instance.SplitJsonFile(args[0],args[1]);
+        
+//        String a = instance.FormatJsonString(ReadFile(inputFile));
     }
 
     
@@ -39,7 +47,6 @@ public class BioLinksDir {
         int endNode;
         int nextNode;
         String write2File;
-        FileWriter writer;
         
         String inputContext = BioLinksDir.ReadFile(inputFile);
         //clean the outside Brace       
@@ -62,16 +69,10 @@ public class BioLinksDir {
                    endNode = inputContext.lastIndexOf(",", nextNode);
                }
                //write file
-               String jsonFileName = outputFolderDir + fileName + ".json";
+               String jsonFileName = outputFolderDir + "\\" + fileName + ".json";
                write2File = "{" + inputContext.substring(0, endNode) + "}";
                inputContext = inputContext.substring(endNode + 1);
-               try {
-                   writer = new FileWriter(jsonFileName);
-                   writer.write(write2File);
-                   writer.close();
-               }catch(IOException e){
-                   System.out.println(e.toString());
-               }
+               outputJsonFile(FormatJsonString(write2File), jsonFileName);
                //no more node
                if (no_next_node) {
                    break;
@@ -80,7 +81,6 @@ public class BioLinksDir {
                break;
            }
         }
-    
     }
     
     public static String ReadFile(String Path){
@@ -109,5 +109,24 @@ public class BioLinksDir {
         return laststr;
     }
 
+    public String FormatJsonString(String inputContext){
+        int hasNode = inputContext.indexOf("\"type\"");
+        if (hasNode != -1) {
+            return inputContext.substring(hasNode - 1,inputContext.length() - 1);
+        }else{
+            return null;
+        }
+    } 
+    
+    public void outputJsonFile(String outputContext, String outputFile){
+        FileWriter writer;
+        try {
+                   writer = new FileWriter(outputFile);
+                   writer.write(outputContext);
+                   writer.close();
+               }catch(IOException e){
+                   System.out.println(e.toString());
+               }
+    }
 }
     
