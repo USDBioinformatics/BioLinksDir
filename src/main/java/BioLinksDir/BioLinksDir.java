@@ -18,22 +18,23 @@ import java.io.InputStreamReader;
 public class BioLinksDir {
 
     public BioLinksDir() {
+        
     }
-    
     public static void main(String[] args) throws IOException {
         BioLinksDir instance = new BioLinksDir();
-//        String inputFile = "C:\\Users\\Xinghua\\Desktop\\dna.json";
-//        String outputFolderDir = "C:\\Users\\Xinghua\\Desktop\\dna";
-//        instance.SplitJsonFile(inputFile, outputFolderDir);
-        if ((args.length == 1)&&(args[0].equals("-help"))) {
-            System.out.println("help information: \n  suppose you have an input json file: C:\\Work\\myfile.json \n"
-                    + "the output folder is: C:\\myfolder \n"
-                    + "so, you can type:  -o C:\\Work\\myfile.json C:\\myfolder");
-        }else if((args.length == 3)&&(args[0].equals("-o"))){
-            instance.SplitJsonFile(args[1],args[2]);
-        }else {
-            System.out.println("wrong paramenter number, type -help");
-        }
+        //Need to do this for the json file produced for EACH CATEGORY (should be approx. 11 input files) 
+        String inputFile = "C:\\Users\\Shayla.Gustafson\\Documents\\GitHub\\BioLinksDir\\data-files\\data-files\\sequence-comparison\\sequence-comparison.json";
+        String outputFolderDir = "C:\\Users\\Shayla.Gustafson\\Documents\\GitHub\\BioLinksDir\\data-files\\data-files\\outputs_2_9_15";
+        instance.SplitJsonFile(inputFile, outputFolderDir);
+//        if ((args.length == 1)&&(args[0].equals("-help"))) {
+//            System.out.println("help information: \n  suppose you have an input json file: C:\\Work\\myfile.json \n"
+//                    + "the output folder is: C:\\myfolder \n"
+//                    + "so, you can type:  -o C:\\Work\\myfile.json C:\\myfolder");
+//        }else if((args.length == 3)&&(args[0].equals("-o"))){
+//            instance.SplitJsonFile(args[1],args[2]);
+//        }else {
+//            System.out.println("wrong paramenter number, type -help");
+//        }
         
 //        String a = instance.FormatJsonString(ReadFile(inputFile));
     }
@@ -64,14 +65,15 @@ public class BioLinksDir {
                nextNode = inputContext.indexOf("\"type\"", hasNode + "\"type\"".length());
                if (nextNode == -1) {
                    no_next_node = true;
-                   endNode = inputContext.length() - 1;
+                   endNode = inputContext.length();
                } else {
                    endNode = inputContext.lastIndexOf(",", nextNode);
                }
                //write file
                String jsonFileName = outputFolderDir + "\\" + fileName + ".json";
                write2File = "{" + inputContext.substring(0, endNode) + "}";
-               inputContext = inputContext.substring(endNode + 1);
+               
+               if(!no_next_node)inputContext = inputContext.substring(endNode + 1);
                outputJsonFile(FormatJsonString(write2File), jsonFileName);
                //no more node
                if (no_next_node) {
@@ -112,7 +114,8 @@ public class BioLinksDir {
     public String FormatJsonString(String inputContext){
         int hasNode = inputContext.indexOf("\"type\"");
         if (hasNode != -1) {
-            return inputContext.substring(hasNode - 1,inputContext.length() - 1);
+            String output = inputContext.substring(hasNode - 1,inputContext.length() - 1);
+            return output;
         }else{
             return null;
         }
